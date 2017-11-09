@@ -1,0 +1,25 @@
+---
+- hosts: osimages
+  roles:
+  - luna_ansible
+  tasks:
+    - name: upgrade all packages, excluding kernel & foo related packages
+      yum:
+        name: '*'
+        state: latest
+        exclude: kernel*
+      notify: Pack the images
+  handlers:  
+    - name: Pack the images
+      luna_osimage:
+        name: "{{ inventory_hostname }}"
+        pack: True
+      delegate_to: localhost
+- hosts:
+  - localhost
+  tasks:
+    - name: Restart ltorrent
+      service: 
+        name: ltorrent
+        state: restarted
+
